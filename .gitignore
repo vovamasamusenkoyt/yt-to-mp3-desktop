@@ -1,0 +1,17 @@
+# Rust target
+target/
+src-tauri/target/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Binaries (downloaded automatically by fetch_bins.sh and CI)
+src-tauri/bin/*.exe
+src-tauri/bin/*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
