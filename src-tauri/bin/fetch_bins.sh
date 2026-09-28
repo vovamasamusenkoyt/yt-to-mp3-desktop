@@ -18,26 +18,30 @@ fi
 # 2. Fetch ffmpeg.exe (extract from yt-dlp official ffmpeg builds)
 if [ ! -f "ffmpeg.exe" ] || [ ! -s "ffmpeg.exe" ]; then
     echo "Downloading ffmpeg build for Windows..."
-    TMP_ZIP="/tmp/ffmpeg_win64.zip"
-    TMP_DIR="/tmp/ffmpeg_extract"
-    rm -rf "$TMP_ZIP" "$TMP_DIR"
-    mkdir -p "$TMP_DIR"
+    TMP_ZIP="ffmpeg_win64.zip"
+    rm -f "$TMP_ZIP"
     
     # Download ffmpeg zip (master latest win64 gpl)
     curl -L -o "$TMP_ZIP" "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
     
     echo "Extracting ffmpeg.exe using python..."
-    python3 -c "
+    PYTHON_BIN="python"
+    if ! command -v python &> /dev/null; then
+        PYTHON_BIN="python3"
+    fi
+
+    "$PYTHON_BIN" -c "
 import zipfile, shutil
-with zipfile.ZipFile('$TMP_ZIP', 'r') as z:
+with zipfile.ZipFile('ffmpeg_win64.zip', 'r') as z:
     for name in z.namelist():
         if name.endswith('bin/ffmpeg.exe'):
-            with z.open(name) as src, open('$SCRIPT_DIR/ffmpeg.exe', 'wb') as dst:
+            with z.open(name) as src, open('ffmpeg.exe', 'wb') as dst:
                 shutil.copyfileobj(src, dst)
+            print('Extracted ffmpeg.exe successfully')
             break
 "
-    rm -rf "$TMP_ZIP"
-    echo "ffmpeg.exe downloaded ($(du -h ffmpeg.exe | cut -f1))"
+    rm -f "$TMP_ZIP"
+    echo "ffmpeg.exe ready ($(du -h ffmpeg.exe | cut -f1))"
 else
     echo "ffmpeg.exe already present ($(du -h ffmpeg.exe | cut -f1))"
 fi
